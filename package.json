@@ -1,0 +1,15 @@
+{
+  "name": "projeto-webgl",
+  "version": "1.0.0",
+  "description": "WebGL project",
+  "main": "index.html",
+  "scripts": {
+    "test": "test",
+    "start": "http-server"
+  },
+  "author": "Alisson Souza",
+  "license": "MIT",
+  "dependencies": {
+    "http-server": "^0.12.3"
+  }
+}
