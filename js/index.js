@@ -1,7 +1,10 @@
+import { ProcessInput } from '/js/ProcessInput.js';
+
 console.log('hm');
 var canvas = document.querySelector("#c");
 
 var gl = canvas.getContext("webgl");
+
 if (!gl) {
 // no webgl for you!
 }
@@ -9,7 +12,7 @@ if (!gl) {
 var translation1 = [-495, 0];
 var translation2 = [495, 0];
 var ballTranslation = [0, 0];
-var ballMovimentVector = [0.5, 0.5];
+var ballMovementVector = [1.0, 1.0];
 var playersRightHigh = [10, 50];
 var player1direct = [0, 0];
 var player2direct = [0, 0];
@@ -18,7 +21,7 @@ var fragmentShaderSource;
 
 var vertexShader;
 var fragmentShader;
-
+var processInput = new ProcessInput();
 loadShaders();
 
 async function loadShaders() {
@@ -63,9 +66,14 @@ async function loadShaders() {
     10, -10
   ]
 
+  translation1[0] = -gl.canvas.clientWidth/2 + 30;
+  translation2[0] = gl.canvas.clientWidth/2 - 30;
+
+  processInput.StartListen();
+
   function mainloop(){
-    ballTranslation[0] += ballMovimentVector[0]*2;
-    ballTranslation[1] += ballMovimentVector[1]*2;
+    ballTranslation[0] += ballMovementVector[0]*2;
+    ballTranslation[1] += ballMovementVector[1]*2;
     translation1[1] += player1direct[1];
     translation2[1] += player2direct[1];
     checkColisionWithGround();
@@ -73,7 +81,7 @@ async function loadShaders() {
     draw();
     requestAnimationFrame(mainloop);
   }
-
+  
   requestAnimationFrame(mainloop);
 
   function draw () {
@@ -113,6 +121,7 @@ async function loadShaders() {
     gl.uniform2fv(translateUniformLocation, ballTranslation)
     gl.drawArrays(primitiveType, offset, count);
   }
+  
   document.addEventListener('keydown', function (event) {
     console.log(event.keyCode);
     if(event.keyCode == 40) {
@@ -176,12 +185,13 @@ function resize(gl) {
 }
 
 function getReflectVecor(dirVector, normal) {
+  normal = normalize(normal);
   var dotProduct = getDotProduct(dirVector, normal);
   dotProduct = dotProduct * 2;
   normal[0] = normal[0] * dotProduct;
   normal[1] = normal[1] * dotProduct;
-  dirVector[0] = ballMovimentVector[0] - normal[0];
-  dirVector[1] = ballMovimentVector[1] - normal[1];
+  dirVector[0] = ballMovementVector[0] - normal[0];
+  dirVector[1] = ballMovementVector[1] - normal[1];
 
   return dirVector;
 }
@@ -203,13 +213,13 @@ function normalize(vector) {
 
 function checkColisionWithGround() {
   if (ballTranslation[1] >= (gl.canvas.clientHeight/2) - 10) {
-    var groundNorm = [0, 1];
-    ballMovimentVector = getReflectVecor(ballMovimentVector, groundNorm);
+    var groundNorm = [0, -1];
+    ballMovementVector = getReflectVecor(ballMovementVector, groundNorm);
   } else if (ballTranslation[0] >= (gl.canvas.clientWidth/2) - 10) {
     document.getElementsByTagName('body')[0].innerHTML = ('<h1>JOGADOR 1 VENCEU</h1>');
   } else if (ballTranslation[1] <= -(gl.canvas.clientHeight/2) + 10) {
-    var groundNorm = [0, -1];
-    ballMovimentVector = getReflectVecor(ballMovimentVector, groundNorm);
+    var groundNorm = [0, 1];
+    ballMovementVector = getReflectVecor(ballMovementVector, groundNorm);
   } else if (ballTranslation[0] <= -(gl.canvas.clientWidth/2) + 10) {
     document.getElementsByTagName('body')[0].innerHTML = ('<h1>JOGADOR 2 VENCEU</h1>');
   }
@@ -218,10 +228,10 @@ function checkColisionWithGround() {
 function checkColisionWithPlayers() {
   if (ballTranslation[0] <= (playersRightHigh[0] + translation1[0]) && ballTranslation[1] >= (playersRightHigh[1] - 100 + translation1[1]) && ballTranslation[1] <= (playersRightHigh[1] + translation1[1])) {
     var groundNorm = [1, 0];
-    ballMovimentVector = getReflectVecor(ballMovimentVector, groundNorm);
+    ballMovementVector = getReflectVecor(ballMovementVector, groundNorm);
   } else if (ballTranslation[0] >= (playersRightHigh[0] + translation2[0]) && ballTranslation[1] >= (playersRightHigh[1] - 100 + translation2[1]) && ballTranslation[1] <= (playersRightHigh[1] + translation2[1])) {
     var groundNorm = [-1, 0];
-    ballMovimentVector = getReflectVecor(ballMovimentVector, groundNorm);
+    ballMovementVector = getReflectVecor(ballMovementVector, groundNorm);
   }
 }
 
