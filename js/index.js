@@ -1,6 +1,9 @@
 import { ProcessInput } from '/js/ProcessInput.js';
+import { ColisionModule, ColisionTypes } from '/js/ColisionModule.js';
 import { Renderer } from '/js/Renderer.js';
 import { Player } from '/js/Player.js';
+import { Ball } from '/js/Ball.js';
+import { Wall } from '/js/Wall.js';
 
 console.log('hm');
 var canvas = document.querySelector("#c");
@@ -8,23 +11,37 @@ var canvas = document.querySelector("#c");
 var render = new Renderer();
 
 var gameObjects = [];
-gameObjects.push(new Player([-100, 0]));
-gameObjects.push(new Player([100, 0]));
+
+const perfectFrameTime = 1000 / 60;
+var deltaTime = 0;
+var lastTimestamp = Date.now();
 
 ProcessInput.init();
 ProcessInput.StartListen();
+ColisionModule.init();
 
 render.init(canvas).then(function(){
-  mainloop()
+  gameObjects.push(new Wall([-render.gl.canvas.clientWidth/2, render.gl.canvas.clientHeight/2], render.gl.canvas.clientWidth, 70, ColisionTypes.TOP));
+  gameObjects.push(new Wall([-render.gl.canvas.clientWidth/2, -render.gl.canvas.clientHeight/2 + 7], render.gl.canvas.clientWidth, 70));
+  gameObjects.push(new Wall([-render.gl.canvas.clientWidth/2, render.gl.canvas.clientHeight/2], 50, render.gl.canvas.clientHeight));
+  gameObjects.push(new Wall([render.gl.canvas.clientWidth/2 - 10, render.gl.canvas.clientHeight/2], 50, render.gl.canvas.clientHeight));
+  gameObjects.push(new Player([-render.gl.canvas.clientWidth/2 + 80, 0]));
+  gameObjects.push(new Player([(render.gl.canvas.clientWidth/2) - 90, 0]));
+  gameObjects.push(new Ball([0, 0], 20, 50));
+  mainloop();
 });
 
 function mainloop(){
+  let timestamp = Date.now();
+  deltaTime = (timestamp - lastTimestamp) / perfectFrameTime;
+  lastTimestamp = timestamp;
+
   render.clearBuffer();
 
   var inputState = ProcessInput.getInputState();
   
   gameObjects.map( gameObject => {
-    gameObject.update(inputState);
+    gameObject.update(inputState, deltaTime);
     gameObject.draw(render);
   });
   

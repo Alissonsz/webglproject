@@ -13,15 +13,14 @@ class ProcessInput {
     static StartListen() {
         console.log('starting listen for inputs');
         document.addEventListener('keydown', function (event) {
-            console.log(event.keyCode);
             if(event.keyCode == 40) {
                 ProcessInput.inputState[InputTypes.ARROW_DOWN] = 1;
             } else if (event.keyCode == 38) {
-                ProcessInput.inputState[InputTypes.ARROW_UP] = 1;  
-            } else if (event.keyCode == 83) {
-                
-            } else if (event.keyCode == 87) {
-                
+                ProcessInput.inputState[InputTypes.ARROW_UP] = 1;
+            } else if (event.keyCode == 39) {
+                ProcessInput.inputState[InputTypes.ARROW_RIGHT] = 1;
+            } else if (event.keyCode == 37) {
+                ProcessInput.inputState[InputTypes.ARROW_LEFT] = 1;
             }
         });
 
@@ -29,8 +28,12 @@ class ProcessInput {
             if(event.keyCode == 40) {
                 ProcessInput.inputState[InputTypes.ARROW_DOWN] = 0;
             } else if (event.keyCode == 38) {
-                ProcessInput.inputState[InputTypes.ARROW_UP] = 0;  
-            } 
+                ProcessInput.inputState[InputTypes.ARROW_UP] = 0;
+            } else if (event.keyCode == 39) {
+                ProcessInput.inputState[InputTypes.ARROW_RIGHT] = 0;
+            } else if (event.keyCode == 37) {
+                ProcessInput.inputState[InputTypes.ARROW_LEFT] = 0;
+            }
         });
     }
 

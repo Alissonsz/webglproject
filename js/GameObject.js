@@ -7,6 +7,10 @@ export class GameObject {
 
     }
 
+    update () {
+    	
+    }
+
     processInput () {
 
     }

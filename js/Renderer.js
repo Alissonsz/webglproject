@@ -11,7 +11,6 @@ export class Renderer {
             console.log('No webgl for you :/');
         }
 
-        
         await this.loadShaders();
 
         this.positionAttributeLocation = await this.gl.getAttribLocation(this.program, "a_position");
@@ -55,6 +54,32 @@ export class Renderer {
             this.positionAttributeLocation, size, type, normalize, stride, offset);
 
         var primitiveType = this.gl.TRIANGLES;
+        var offset = 0;
+        var count = pos.length/2;
+        this.gl.drawArrays(primitiveType, offset, count);
+    }
+
+    drawCircle(pos, translate = [0, 0]) {
+        this.gl.useProgram(this.program);
+        this.gl.enableVertexAttribArray(this.positionAttributeLocation);
+
+        this.gl.uniform2fv(this.translateUniformLocation, translate);
+        this.gl.uniform2f(this.resolutionUniformLocation, this.gl.canvas.width, this.gl.canvas.height);
+        
+        // Bind the position buffer.
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.positionBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(pos), this.gl.STATIC_DRAW);
+        
+        // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
+        var size = 2;          // 2 components per iteration
+        var type = this.gl.FLOAT;   // the data is 32bit floats
+        var normalize = false; // don't normalize the data
+        var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
+        var offset = 0;        // start at the beginning of the buffer
+        this.gl.vertexAttribPointer(
+            this.positionAttributeLocation, size, type, normalize, stride, offset);
+
+        var primitiveType = this.gl.TRIANGLE_FAN;
         var offset = 0;
         var count = pos.length/2;
         this.gl.drawArrays(primitiveType, offset, count);
