@@ -1,11 +1,11 @@
-import { GameObject } from "/js/GameObject.js";
+import { GameObject, ObjectTypes } from "/js/GameObject.js";
 import { InputTypes } from '/js/ProcessInput.js';
 import { ColisionModule, ColisionTypes } from '/js/ColisionModule.js';
+import { GeometryUtils } from '/js/GeometryUtils.js';
 
 export class Ball extends GameObject {
 	constructor (pos, radius, amountOfTriangles) {
 		super();
-		var numOfVertex = 50;
 		var twicePi = 2.0 * Math.PI;
 		var circleVertex = new Array();
 		circleVertex.push(pos[0]);
@@ -21,10 +21,11 @@ export class Ball extends GameObject {
 		this.geometry = circleVertex;
 		this.pos = pos;
 		this.radius = radius;
+		this.unsolvedColisions = [];
 
 		this.movmentVector = [0, 0];
-        this.velocityX = 1;
-        this.velocityY = 1;
+        this.velocityX = 2;
+		this.velocityY = 2;
 	}
 
 	draw (render) {
@@ -32,9 +33,43 @@ export class Ball extends GameObject {
     }
 
     update (inputState, deltaTime) {
-    	var hm = ColisionModule.CheckBallColision(this.pos, this.radius);
-
+		ColisionModule.CheckBallColision(this, this.pos, this.radius);
+		this.solveColisions();
     	this.pos[0] += this.velocityX * deltaTime;
     	this.pos[1] += this.velocityY * deltaTime;
-    }
+	}
+	
+	solveColisions() {
+		this.unsolvedColisions.map((colision, index) => {
+			if (colision[0] == ColisionTypes.TOP) {
+				let reflectVector = GeometryUtils.getReflectVecor([this.velocityX, this.velocityY], [0, -1]);
+				this.velocityX = reflectVector[0];
+				this.velocityY = reflectVector[1];
+				this.unsolvedColisions.splice(index, 1);
+			} else if (colision[0] == ColisionTypes.RIGHT) {
+				if(colision[1] == ObjectTypes.PLAYER) {
+					let reflectVector = GeometryUtils.getReflectVecor([this.velocityX, this.velocityY], [-1, 0]);
+					this.velocityX = reflectVector[0] *= 1.3;
+					this.velocityY = reflectVector[1] *= 1.3;
+					this.unsolvedColisions.splice(index, 1);
+				} else {
+					
+				}
+			} else if (colision[0] == ColisionTypes.BOTTOM) {
+				let reflectVector = GeometryUtils.getReflectVecor([this.velocityX, this.velocityY], [0, 1]);
+				this.velocityX = reflectVector[0];
+				this.velocityY = reflectVector[1];
+				this.unsolvedColisions.splice(index, 1);
+			} else if (colision[0] == ColisionTypes.LEFT) {
+				if(colision[1] == ObjectTypes.PLAYER) {
+					let reflectVector = GeometryUtils.getReflectVecor([this.velocityX, this.velocityY], [1, 0]);
+					this.velocityX = reflectVector[0] *= 1.3;
+					this.velocityY = reflectVector[1] *= 1.3;
+					this.unsolvedColisions.splice(index, 1);
+				} else {
+					
+				}
+			}
+		});
+	}
 }

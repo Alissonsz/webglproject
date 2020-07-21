@@ -1,4 +1,10 @@
-export class GameObject {
+var ObjectTypes = Object.freeze({
+    WALL: 0,
+    PLAYER: 1,
+    BALL: 2
+});
+
+class GameObject {
     constructor () {
         
     }
@@ -15,3 +21,5 @@ export class GameObject {
 
     }
 }
+
+export { ObjectTypes, GameObject }

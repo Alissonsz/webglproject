@@ -22,11 +22,11 @@ ColisionModule.init();
 
 render.init(canvas).then(function(){
   gameObjects.push(new Wall([-render.gl.canvas.clientWidth/2, render.gl.canvas.clientHeight/2], render.gl.canvas.clientWidth, 70, ColisionTypes.TOP));
-  gameObjects.push(new Wall([-render.gl.canvas.clientWidth/2, -render.gl.canvas.clientHeight/2 + 7], render.gl.canvas.clientWidth, 70));
-  gameObjects.push(new Wall([-render.gl.canvas.clientWidth/2, render.gl.canvas.clientHeight/2], 50, render.gl.canvas.clientHeight));
-  gameObjects.push(new Wall([render.gl.canvas.clientWidth/2 - 10, render.gl.canvas.clientHeight/2], 50, render.gl.canvas.clientHeight));
-  gameObjects.push(new Player([-render.gl.canvas.clientWidth/2 + 80, 0]));
-  gameObjects.push(new Player([(render.gl.canvas.clientWidth/2) - 90, 0]));
+  gameObjects.push(new Wall([-render.gl.canvas.clientWidth/2, -render.gl.canvas.clientHeight/2 + 7], render.gl.canvas.clientWidth, 70, ColisionTypes.BOTTOM));
+  gameObjects.push(new Wall([-render.gl.canvas.clientWidth/2, render.gl.canvas.clientHeight/2], 50, render.gl.canvas.clientHeight, ColisionTypes.LEFT));
+  gameObjects.push(new Wall([render.gl.canvas.clientWidth/2 - 10, render.gl.canvas.clientHeight/2], 50, render.gl.canvas.clientHeight, ColisionTypes.RIGHT));
+  gameObjects.push(new Player([-render.gl.canvas.clientWidth/2 + 80, 0], ColisionTypes.LEFT, 1));
+  gameObjects.push(new Player([(render.gl.canvas.clientWidth/2) - 90, 0], ColisionTypes.RIGHT, 2));
   gameObjects.push(new Ball([0, 0], 20, 50));
   mainloop();
 });

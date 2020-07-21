@@ -5,8 +5,8 @@ export class GeometryUtils {
         dotProduct = dotProduct * 2;
         normal[0] = normal[0] * dotProduct;
         normal[1] = normal[1] * dotProduct;
-        dirVector[0] = ballMovementVector[0] - normal[0];
-        dirVector[1] = ballMovementVector[1] - normal[1];
+        dirVector[0] = dirVector[0] - normal[0];
+        dirVector[1] = dirVector[1] - normal[1];
       
         return dirVector;
     }
